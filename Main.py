@@ -1,1 +1,3 @@
-#ACA SE VA A EJECUTAR EL PRORAMA 
+from Menu import mostrar_menu
+
+mostrar_menu()
