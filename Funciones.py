@@ -192,7 +192,55 @@ def crear_usuario() -> None:
         - Rol: 'Jugador' o 'Desarrolladora'.
         - Datos adicionales según el rol elegido.
     """
-    pass
+    print("\n==== CREAR USUARIO ====\n")
+
+    nombre_usuario = ""
+    while len(nombre_usuario) < 4:
+        nombre_usuario = input("Ingrese el nombre de usuario (mín. 4 caracteres): ")
+        if len(nombre_usuario) < 4:
+            print("Error: el nombre de usuario debe tener al menos 4 caracteres.\n")
+
+    contraseña = ""
+    while len(contraseña) < 8:
+        contraseña = input("Ingrese la contraseña (mín. 8 caracteres): ")
+        if len(contraseña) < 8:
+            print("Error: la contraseña debe tener al menos 8 caracteres.\n")
+
+    roles_validos = ["Jugador", "Desarrolladora"]
+    print("\nRoles disponibles:")
+    i = 0
+    while i < len(roles_validos):
+        print(f"  {i + 1} - {roles_validos[i]}")
+        i += 1
+
+    rol_elegido = -1
+    while rol_elegido == -1:
+        opcion = input("\nElija un rol: ")
+        if opcion.isdigit():
+            num = int(opcion)
+            if 1 <= num <= len(roles_validos):
+                rol_elegido = num - 1
+            else:
+                print("Opción fuera de rango.\n")
+        else:
+            print("Ingrese un número válido.\n")
+
+    rol = roles_validos[rol_elegido]
+
+    print(f"\nDatos adicionales para {rol}:\n")
+
+    nombre = input("Nombre: ")
+    apellido = input("Apellido: ")
+    pais = input("País: ")
+
+    if rol == "Jugador":
+        genero_favorito = input("Género de videojuego favorito: ")
+        print(f"\n  Género favorito registrado: {genero_favorito}")
+    else:
+        sitio_web = input("Sitio web del estudio: ")
+        print(f"\n  Sitio web registrado: {sitio_web}")
+
+    mostrar_confirmacion_creacion(nombre_usuario, rol)
  
  
 def borrar_usuario() -> None:
@@ -204,7 +252,15 @@ def borrar_usuario() -> None:
     Nota:
         No elimina datos reales. Solo muestra un mensaje de confirmación.
     """
-    pass
+    print("\n==== BORRAR USUARIO ====\n")
+
+    nombre_usuario = ""
+    while len(nombre_usuario) < 4:
+        nombre_usuario = input("Ingrese el nombre de usuario a eliminar (mín. 4 caracteres): ")
+        if len(nombre_usuario) < 4:
+            print("Error: el nombre de usuario debe tener al menos 4 caracteres.\n")
+
+    mostrar_confirmacion_borrado(nombre_usuario)
  
  
 def ver_info_sistema() -> None:
@@ -216,4 +272,4 @@ def ver_info_sistema() -> None:
         - Funcionalidades extra por rol (mínimo 3 para Jugador,
           2 para Desarrolladora, 2 para Administrador).
     """
-    pass
+    mostrar_info_sistema()

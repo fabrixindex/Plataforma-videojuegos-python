@@ -10,8 +10,8 @@ def mostrar_bienvenida() -> None:
     print("Tu plataforma de videojuegos")
     print()
     print("Descubrí, jugá y conectá con la comunidad gamer.\n")
-    
- 
+
+
 #  JUGADOR
  
 def mostrar_perfil_jugador(nombre_usuario: str, nombre: str, apellido: str,
@@ -93,8 +93,8 @@ def mostrar_datos_desarrolladora(nombre_estudio: str, pais: str, sitio_web: str,
     print(f"  Ventas totales:       {ventas_totales}")
     print(f"  Año de fundación:     {año_fund}")
     print()
- 
- 
+
+
 def mostrar_confirmacion_publicacion(nombre_juego: str, precio: float) -> None:
     """Muestra el mensaje de confirmación al publicar un juego.
  
@@ -106,8 +106,8 @@ def mostrar_confirmacion_publicacion(nombre_juego: str, precio: float) -> None:
     print(f"  Nombre del juego:  {nombre_juego}")
     print(f"  Precio:            ${precio:.2f}")
     print("\n¡Tu juego ya está disponible en GameHub!\n")
- 
- 
+
+
 def mostrar_ventas() -> None:
     """Muestra un resumen ficticio de ventas del mes."""
     print("\n==== VENTAS DEL MES ====\n")
@@ -115,8 +115,8 @@ def mostrar_ventas() -> None:
     print("  Ingresos:       $5.980,00")
     print("  Juego más vendido: Pixel Dungeon 2")
     print()
- 
- 
+
+
 #  ADMINISTRADOR
  
 def mostrar_confirmacion_creacion(nombre_usuario: str, rol: str) -> None:
@@ -126,18 +126,61 @@ def mostrar_confirmacion_creacion(nombre_usuario: str, rol: str) -> None:
         nombre_usuario (str): Nombre del usuario creado.
         rol (str): Rol asignado al nuevo usuario.
     """
-    pass
- 
- 
+    print("\n==== USUARIO CREADO ====\n")
+    print(f"  Usuario:  {nombre_usuario}")
+    print(f"  Rol:      {rol}")
+    print("\n¡El usuario fue registrado exitosamente en el sistema!\n")
+
+
 def mostrar_confirmacion_borrado(nombre_usuario: str) -> None:
     """Muestra el mensaje de confirmación al simular el borrado de un usuario.
  
     Args:
         nombre_usuario (str): Nombre del usuario a eliminar.
     """
-    pass
- 
- 
+    print("\n==== USUARIO ELIMINADO ====\n")
+    print(f"  El usuario '{nombre_usuario}' fue eliminado del sistema.")
+
+
 def mostrar_info_sistema() -> None:
     """Muestra la información general del sistema, integrantes y funcionalidades."""
-    pass
+    print("\n==== INFORMACIÓN DEL SISTEMA ====\n")
+
+    print("  Integrantes del grupo:")
+    print("    - Rubén Doblas")
+    print("    - Ubisoft Games")
+    print()
+
+    print("  Descripción del sistema:")
+    print("    GameHub es una plataforma digital de videojuegos que conecta")
+    print("    a jugadores con el catálogo de títulos disponibles y permite")
+    print("    a desarrolladoras gestionar la publicación y seguimiento de")
+    print("    sus juegos en un solo lugar.")
+    print()
+    print("    Problema que resuelve:")
+    print("    Centraliza la compra de juegos, la gestión de estudios y la")
+    print("    administración de usuarios en un único sistema unificado.")
+    print()
+    print("    Tipos de usuario:")
+    print("    - Jugador: accede al catálogo y gestiona su perfil.")
+    print("    - Desarrolladora: publica juegos y consulta sus ventas.")
+    print("    - Administrador: administra los usuarios del sistema.")
+    print()
+
+    print("  Funcionalidades por rol:")
+    print()
+    print("    Jugador (3):")
+    print("      1. Ver perfil con estadísticas personales.")
+    print("      2. Explorar catálogo de juegos por empresa.")
+    print("      3. Simular la compra de un juego con método de pago.")
+    print()
+    print("    Desarrolladora (2):")
+    print("      1. Ver los datos del estudio registrado.")
+    print("      2. Publicar un nuevo juego con nombre y precio.")
+    print("      3. Consultar resumen de ventas del mes.")
+    print()
+    print("    Administrador (2):")
+    print("      1. Crear un nuevo usuario con rol asignado.")
+    print("      2. Simular el borrado de un usuario existente.")
+    print("      3. Ver la información general del sistema.")
+    print()
