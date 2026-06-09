@@ -74,7 +74,7 @@ def mostrar_confirmacion_compra(titulo: str, metodo: str, precio: float) -> None
 #  DESARROLLADORA
  
 def mostrar_datos_desarrolladora(nombre_estudio: str, pais: str, sitio_web: str,
-                                  juegos_publicados: int, ventas_totales: int, anio_fundacion: int) -> None:
+                                  juegos_publicados: int, ventas_totales: int, año_fund: int) -> None:
     """Muestra los datos del estudio desarrollador por consola.
  
     Args:
@@ -83,9 +83,16 @@ def mostrar_datos_desarrolladora(nombre_estudio: str, pais: str, sitio_web: str,
         sitio_web (str): Sitio web oficial.
         juegos_publicados (int): Cantidad de juegos publicados en la plataforma.
         ventas_totales (int): Total de copias vendidas.
-        anio_fundacion (int): Año de fundación del estudio.
+        año_fund (int): Año de fundación del estudio.
     """
-    pass
+    print("\n==== DATOS DEL ESTUDIO ====\n")
+    print(f"  Nombre del estudio:   {nombre_estudio}")
+    print(f"  País:                 {pais}")
+    print(f"  Sitio web:            {sitio_web}")
+    print(f"  Juegos publicados:    {juegos_publicados}")
+    print(f"  Ventas totales:       {ventas_totales}")
+    print(f"  Año de fundación:     {año_fund}")
+    print()
  
  
 def mostrar_confirmacion_publicacion(nombre_juego: str, precio: float) -> None:
@@ -95,12 +102,19 @@ def mostrar_confirmacion_publicacion(nombre_juego: str, precio: float) -> None:
         nombre_juego (str): Nombre del juego publicado.
         precio (float): Precio asignado al juego.
     """
-    pass
+    print("\n==== JUEGO PUBLICADO ====\n")
+    print(f"  Nombre del juego:  {nombre_juego}")
+    print(f"  Precio:            ${precio:.2f}")
+    print("\n¡Tu juego ya está disponible en GameHub!\n")
  
  
 def mostrar_ventas() -> None:
     """Muestra un resumen ficticio de ventas del mes."""
-    pass
+    print("\n==== VENTAS DEL MES ====\n")
+    print("  Ventas del mes: 120 copias vendidas.")
+    print("  Ingresos:       $5.980,00")
+    print("  Juego más vendido: Pixel Dungeon 2")
+    print()
  
  
 #  ADMINISTRADOR

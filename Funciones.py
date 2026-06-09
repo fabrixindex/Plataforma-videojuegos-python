@@ -116,7 +116,23 @@ def ver_datos_desarrolladora(indice_usuario: int) -> None:
     Args:
         indice_usuario (int): Índice del usuario en las listas globales.
     """
-    pass
+    # Datos hardcodeados por índice de usuario desarrolladora
+    nombres_estudio  = ["Blyts", "HyperBeard",    "The Game Kitchen"]
+    paises_estudio   = ["Argentina",           "México",        "España"]
+    sitios_web       = ["https://en.blyts.com/",  "https://hyperbeard.com/", "https://thegamekitchen.com/"]
+    juegos_pub       = [8,                     3,               12]
+    ventas_tot       = [45000,                 12000,           98000]
+    año_fund       = [2015,                  2019,            2010]
+
+    mostrar_datos_desarrolladora(
+        nombres_estudio[indice_usuario],
+        paises_estudio[indice_usuario],
+        sitios_web[indice_usuario],
+        juegos_pub[indice_usuario],
+        ventas_tot[indice_usuario],
+        año_fund[indice_usuario],
+    )
+ 
  
  
 def publicar_juego() -> None:
@@ -126,12 +142,43 @@ def publicar_juego() -> None:
         - Nombre del videojuego: no vacío.
         - Precio: debe ser mayor a 0.
     """
-    pass
+    nombre_juego = ""
+    while nombre_juego == "":
+        nombre_juego = input("Ingrese el nombre del videojuego: ")
+        if nombre_juego == "":
+            print("Error: el nombre no puede estar vacío.\n")
+
+    precio = 0.0
+    precio_valido = False
+    while not precio_valido:
+        entrada = input("Ingrese el precio del juego: ")
+        es_numero = True
+        cantidad_puntos = 0
+        i = 0
+        while i < len(entrada):
+            if entrada[i] == ".":
+                cantidad_puntos += 1
+            elif not entrada[i].isdigit():
+                es_numero = False
+            i += 1
+        if cantidad_puntos > 1:
+            es_numero = False
+
+        if not es_numero or entrada == "" or entrada == ".":
+            print("Error: ingrese un número válido.\n")
+        else:
+            precio = float(entrada)
+            if precio <= 0:
+                print("Error: el precio debe ser mayor a 0.\n")
+            else:
+                precio_valido = True
+
+    mostrar_confirmacion_publicacion(nombre_juego, precio)
  
  
 def ver_ventas() -> None:
     """Simula la visualización de ventas del mes con datos ficticios."""
-    pass
+    mostrar_ventas()
  
  
 #  ADMINISTRADOR
