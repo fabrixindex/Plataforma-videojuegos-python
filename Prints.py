@@ -14,12 +14,14 @@ def mostrar_bienvenida() -> None:
  
 #  JUGADOR
  
-def mostrar_perfil_jugador(nombre: str, apellido: str, pais: str, genero_favorito: str,
+def mostrar_perfil_jugador(nombre_usuario: str, nombre: str, apellido: str,
+                            pais: str, genero_favorito: str,
                             horas_jugadas: int, juegos_comprados: int, logros: int) -> None:
     """Muestra los datos del perfil de un jugador por consola.
- 
+
     Args:
-        nombre (str): Nombre del jugador.
+        nombre_usuario (str): Nombre de usuario de la sesión.
+        nombre (str): Nombre real del jugador.
         apellido (str): Apellido del jugador.
         pais (str): País de origen.
         genero_favorito (str): Género de videojuego favorito.
@@ -27,34 +29,47 @@ def mostrar_perfil_jugador(nombre: str, apellido: str, pais: str, genero_favorit
         juegos_comprados (int): Cantidad de juegos adquiridos.
         logros (int): Cantidad de logros desbloqueados.
     """
-    pass
- 
- 
+    print("\n==== PERFIL DEL JUGADOR ====\n")
+    print(f"  Usuario:           {nombre_usuario}")
+    print(f"  Nombre:            {nombre}")
+    print(f"  Apellido:          {apellido}")
+    print(f"  País:              {pais}")
+    print(f"  Género favorito:   {genero_favorito}")
+    print(f"  Horas jugadas:     {horas_jugadas}")
+    print(f"  Juegos comprados:  {juegos_comprados}")
+    print(f"  Logros:            {logros}")
+    print()
+
+
 def mostrar_catalogo_juegos(empresa: str, titulos: list, precios: list) -> None:
     """Muestra el listado de juegos disponibles de una empresa con sus precios.
- 
+
     Args:
         empresa (str): Nombre de la empresa desarrolladora.
         titulos (list): Lista de títulos de juegos.
         precios (list): Lista de precios correspondientes a cada título.
     """
-    pass
- 
- 
-def mostrar_metodos_pago() -> None:
-    """Muestra las opciones de métodos de pago disponibles."""
-    pass
- 
- 
+    print(f"\n==== CATÁLOGO — {empresa.upper()} ====\n")
+    i = 0
+    while i < len(titulos):
+        print(f"  {i + 1} - {titulos[i]:<25} ${precios[i]:.2f}")
+        i += 1
+    print()
+
+
 def mostrar_confirmacion_compra(titulo: str, metodo: str, precio: float) -> None:
     """Muestra el resumen y confirmación de una compra realizada.
- 
+
     Args:
         titulo (str): Nombre del juego comprado.
         metodo (str): Método de pago utilizado.
         precio (float): Precio total de la compra.
     """
-    pass
+    print("\n==== COMPRA CONFIRMADA ====\n")
+    print(f"  Juego:             {titulo}")
+    print(f"  Método de pago:    {metodo}")
+    print(f"  Total:             ${precio:.2f}")
+    print("\n¡Gracias por tu compra!\n")
  
 #  DESARROLLADORA
  

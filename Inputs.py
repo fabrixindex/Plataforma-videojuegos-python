@@ -2,6 +2,15 @@ usuarios  = ["elrubiusomg",   "ubisoftgames",  "adminepic"]
 passwords = ["callofduty7",   "assasinscreed", "metalgearsolid"]
 roles     = ["Jugador",       "Desarrolladora","Administrador"]
 
+# Datos extra del perfil jugador
+nombres          = ["Rubén",    "Ubisoft",  "Epic"]
+apellidos        = ["Doblas",   "Games",    "Admin"]
+paises           = ["España",   "Francia",  "EEUU"]
+generos_favoritos= ["FPS",      "Aventura", "Acción"]
+horas_jugadas    = [1500,       3200,       800]
+juegos_comprados = [42,         15,         5]
+logros           = [320,        210,        90]
+
 def validar_login(usuario: str, password: str) -> int:
     """Busca el usuario y contraseña en las listas predefinidas.
 

@@ -1,30 +1,110 @@
-from Inputs import usuarios, roles
+from Inputs import *
+from Prints import *
  
 #  JUGADOR
 
 def ver_perfil_jugador(indice_usuario: int) -> None:
-    """Muestra los datos del jugador logueado (hardcodeados).
- 
-    Incluye al menos 4 datos de tipo str y 3 de tipo int.
- 
+    """Muestra los datos del jugador logueado.
+
+    Combina el nombre de usuario de la sesión con los datos
+    hardcodeados del perfil (4 str y 3 int).
+
     Args:
         indice_usuario (int): Índice del usuario en las listas globales.
     """
-    pass
- 
- 
+    mostrar_perfil_jugador(
+        usuarios[indice_usuario],
+        nombres[indice_usuario],
+        apellidos[indice_usuario],
+        paises[indice_usuario],
+        generos_favoritos[indice_usuario],
+        horas_jugadas[indice_usuario],
+        juegos_comprados[indice_usuario],
+        logros[indice_usuario],
+    )
+
+
+
 def explorar_catalogo() -> None:
-    """Permite al jugador buscar juegos por empresa desarrolladora,
-    elegir un título y simular una compra con método de pago.
- 
-    Flujo:
-        1. Solicita nombre de empresa (mínimo 3 caracteres).
-        2. Muestra submenú de juegos de esa empresa con precios.
-        3. Muestra submenú de métodos de pago.
-        4. Calcula precio total y confirma la compra (o cancela si elige 0).
+    """Permite al jugador buscar juegos por empresa, elegir un título
+    y simular una compra con método de pago.
     """
-    pass
- 
+    # ── Datos hardcodeados ──────────────────────────────────
+    empresas = ["ubisoft",    "ea",         "valve"]
+    titulos  = [
+        ["Assassin's Creed", "Far Cry 6",  "Rainbow Six"],
+        ["FIFA 25",          "The Sims 4", "Apex Legends"],
+        ["CS2",              "Dota 2",     "Half-Life: Alyx"],
+    ]
+    precios  = [
+        [59.99, 49.99, 39.99],
+        [69.99, 39.99,  0.00],
+        [49.99,  0.00, 59.99],
+    ]
+    metodos_pago = ["Tarjeta de Crédito", "PayPal"]
+
+    # ── 1. Buscar empresa ───────────────────────────────────
+    empresa = ""
+    while len(empresa) < 3:
+        empresa = input("Ingrese el nombre de la empresa desarrolladora: ").lower()
+        if len(empresa) < 3:
+            print("Error: debe tener al menos 3 caracteres.\n")
+
+    indice_empresa = -1
+    i = 0
+    while i < len(empresas) and indice_empresa == -1:
+        if empresas[i] == empresa:
+            indice_empresa = i
+        i += 1
+
+    if indice_empresa == -1:
+        print(f"No se encontró la empresa '{empresa}'.\n")
+        return
+
+    # ── 2. Submenú de juegos ────────────────────────────────
+    mostrar_catalogo_juegos(empresa, titulos[indice_empresa], precios[indice_empresa])
+
+    juego_elegido = -1
+    while juego_elegido == -1:
+        opcion = input("Elija un juego (número): ")
+        if opcion.isdigit():
+            num = int(opcion)
+            if 1 <= num <= len(titulos[indice_empresa]):
+                juego_elegido = num - 1
+            else:
+                print("Opción fuera de rango.\n")
+        else:
+            print("Ingrese un número válido.\n")
+
+    # ── 3. Submenú de métodos de pago ───────────────────────
+    print("\n==== MÉTODO DE PAGO ====\n")
+    i = 0
+    while i < len(metodos_pago):
+        print(f"  {i + 1} - {metodos_pago[i]}")
+        i += 1
+    print("  0 - Ninguno")
+
+    metodo_elegido = -1
+    while metodo_elegido == -1:
+        opcion = input("\nElija un método de pago: ")
+        if opcion == "0":
+            print("\nCompra cancelada.\n")
+            return
+        elif opcion.isdigit():
+            num = int(opcion)
+            if 1 <= num <= len(metodos_pago):
+                metodo_elegido = num - 1
+            else:
+                print("Opción fuera de rango.\n")
+        else:
+            print("Ingrese un número válido.\n")
+
+    # ── 4. Confirmar compra ─────────────────────────────────
+    mostrar_confirmacion_compra(
+        titulos[indice_empresa][juego_elegido],
+        metodos_pago[metodo_elegido],
+        precios[indice_empresa][juego_elegido],
+    )
 
 #  DESARROLLADORA
  
