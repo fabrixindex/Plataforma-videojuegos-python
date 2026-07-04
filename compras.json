@@ -1,0 +1,34 @@
+[
+  {
+    "jugador": "elrubiusomg",
+    "juego": "Assassin's Creed",
+    "desarrolladora": "ubisoftgames",
+    "precio": 59.99,
+    "metodo_pago": "Tarjeta de Credito",
+    "fecha": "2025-06-01"
+  },
+  {
+    "jugador": "elrubiusomg",
+    "juego": "Rainbow Six Siege",
+    "desarrolladora": "ubisoftgames",
+    "precio": 39.99,
+    "metodo_pago": "MercadoPago",
+    "fecha": "2025-06-10"
+  },
+  {
+    "jugador": "gamerchick99",
+    "juego": "Kleptocats",
+    "desarrolladora": "hyperbeard01",
+    "precio": 0.0,
+    "metodo_pago": "MercadoPago",
+    "fecha": "2025-06-15"
+  },
+  {
+    "jugador": "elrubiusomg",
+    "juego": "Kleptocats",
+    "desarrolladora": "hyperbeard01",
+    "precio": 0.0,
+    "metodo_pago": "Tarjeta de Credito",
+    "fecha": "2026-07-03"
+  }
+]

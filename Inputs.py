@@ -1,40 +1,54 @@
-usuarios  = ["elrubiusomg",   "ubisoftgames",  "adminepic"]
-passwords = ["callofduty7",   "assasinscreed", "metalgearsolid"]
-roles     = ["Jugador",       "Desarrolladora","Administrador"]
+import hashlib
 
-# Datos extra del perfil jugador
-nombres          = ["Rubén",    "Ubisoft",  "Epic"]
-apellidos        = ["Doblas",   "Games",    "Admin"]
-paises           = ["España",   "Francia",  "EEUU"]
-generos_favoritos= ["FPS",      "Aventura", "Acción"]
-horas_jugadas    = [1500,       3200,       800]
-juegos_comprados = [42,         15,         5]
-logros           = [320,        210,        90]
 
-def validar_login(usuario: str, password: str) -> int:
-    """Busca el usuario y contraseña en las listas predefinidas.
+def hashear_password(password: str) -> str:
+    """Genera el hash SHA-256 de una contraseña en texto plano.
+
+    Se usa para no almacenar contraseñas en texto plano dentro de
+    usuarios.json.
 
     Args:
-        usuario (str): Nombre de usuario ingresado.
-        password (str): Contraseña ingresada.
+        password (str): Contraseña en texto plano.
 
     Returns:
-        int: Índice del usuario si existe y la contraseña es correcta, -1 en caso contrario.
+        str: Representación hexadecimal del hash de la contraseña.
     """
+    return hashlib.sha256(password.encode("utf-8")).hexdigest()
+
+
+def validar_login(usuarios: list, usuario: str, password: str) -> int:
+    """Busca las credenciales dentro de la lista de usuarios cargada desde archivo.
+
+    Función pura: recibe la lista de usuarios y no la modifica.
+
+    Args:
+        usuarios (list): Lista de diccionarios de usuarios (usuarios.json).
+        usuario (str): Nombre de usuario ingresado.
+        password (str): Contraseña ingresada en texto plano.
+
+    Returns:
+        int: Índice del usuario si usuario y contraseña coinciden, -1 si no.
+    """
+    hash_ingresado = hashear_password(password)
     retorno = -1
     i = 0
     while i < len(usuarios) and retorno == -1:
-        if usuarios[i] == usuario and passwords[i] == password:
+        if usuarios[i]["usuario"] == usuario and usuarios[i]["contraseña"] == hash_ingresado:
             retorno = i
         i += 1
     return retorno
 
-def iniciar_sesion() -> int:
-    """Solicita usuario y contraseña al usuario, valida el formato y verifica
-    las credenciales. Repite hasta que el login sea exitoso.
+
+def iniciar_sesion(usuarios: list) -> int:
+    """Solicita usuario y contraseña, valida el formato y las credenciales.
+
+    Repite la solicitud hasta que el login sea exitoso.
+
+    Args:
+        usuarios (list): Lista de diccionarios de usuarios cargada desde usuarios.json.
 
     Returns:
-        int: Índice del usuario logueado en las listas.
+        int: Índice del usuario logueado dentro de la lista `usuarios`.
     """
     retorno = -1
     while retorno == -1:
@@ -46,11 +60,10 @@ def iniciar_sesion() -> int:
         elif len(password) < 8:
             print("Error: la contraseña debe tener al menos 8 caracteres.\n")
         else:
-            indice = validar_login(usuario, password)
+            indice = validar_login(usuarios, usuario, password)
             if indice == -1:
                 print("Error: usuario o contraseña incorrectos.\n")
             else:
-                print(f"Bienvenido, {usuarios[indice]}! Rol: {roles[indice]}\n")
+                print(f"Bienvenido, {usuarios[indice]['usuario']}! Rol: {usuarios[indice]['rol']}\n")
                 retorno = indice
     return retorno
-    

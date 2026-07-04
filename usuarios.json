@@ -1,0 +1,56 @@
+[
+  {
+    "usuario": "elrubiusomg",
+    "contraseña": "ceade5cd21350825dc3c177a44bd5c45d625982592e34fa641e2089ddc3a7938",
+    "rol": "Jugador",
+    "nombre": "Rubén",
+    "apellido": "Doblas",
+    "pais": "España",
+    "genero_favorito": "FPS",
+    "horas_jugadas": 1500,
+    "juegos_comprados": 3,
+    "logros": 320
+  },
+  {
+    "usuario": "gamerchick99",
+    "contraseña": "ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f",
+    "rol": "Jugador",
+    "nombre": "Lucía",
+    "apellido": "Fernández",
+    "pais": "Argentina",
+    "genero_favorito": "Aventura",
+    "horas_jugadas": 640,
+    "juegos_comprados": 1,
+    "logros": 75
+  },
+  {
+    "usuario": "ubisoftgames",
+    "contraseña": "b9434772ca28939fb52bae82392b639f2380bd35a2555441e7956e29d4eb0ad0",
+    "rol": "Desarrolladora",
+    "nombre_estudio": "Ubisoft",
+    "pais": "Francia",
+    "sitio_web": "https://www.ubisoft.com/",
+    "juegos_publicados": 3,
+    "ventas_totales": 3200,
+    "año_fundacion": 1986
+  },
+  {
+    "usuario": "hyperbeard01",
+    "contraseña": "92dee95db540a3288d1425a40925c9154fa027b58eef9a69d8049cd9fba74593",
+    "rol": "Desarrolladora",
+    "nombre_estudio": "HyperBeard",
+    "pais": "México",
+    "sitio_web": "https://hyperbeard.com/",
+    "juegos_publicados": 1,
+    "ventas_totales": 900,
+    "año_fundacion": 2019
+  },
+  {
+    "usuario": "adminepic",
+    "contraseña": "a4498336106b56d55fd374d29e140aaaaf7d729d629a4fea85a8bf44d2429331",
+    "rol": "Administrador",
+    "nombre": "Epic",
+    "apellido": "Admin",
+    "pais": "EEUU"
+  }
+]

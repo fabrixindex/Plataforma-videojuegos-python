@@ -1,82 +1,264 @@
-from Inputs import *
+from datetime import date
+
+from Inputs import hashear_password
 from Prints import *
- 
-#  JUGADOR
+from Persistencia import guardar_usuarios, guardar_juegos, guardar_compras, guardar_eliminados
 
-def ver_perfil_jugador(indice_usuario: int) -> None:
-    """Muestra los datos del jugador logueado.
 
-    Combina el nombre de usuario de la sesión con los datos
-    hardcodeados del perfil (4 str y 3 int).
+#  FUNCIONES PURAS (búsqueda, filtrado, cálculo) ─────────────────
+#  No reciben ni modifican variables globales: reciben datos y
+#  devuelven un resultado.
+
+def buscar_indice_usuario(usuarios: list, nombre_usuario: str) -> int:
+    """Busca el índice de un usuario por nombre de usuario.
 
     Args:
-        indice_usuario (int): Índice del usuario en las listas globales.
+        usuarios (list): Lista de diccionarios de usuarios.
+        nombre_usuario (str): Nombre de usuario a buscar.
+
+    Returns:
+        int: Índice del usuario si existe, -1 en caso contrario.
     """
+    indice = -1
+    i = 0
+    while i < len(usuarios) and indice == -1:
+        if usuarios[i]["usuario"] == nombre_usuario:
+            indice = i
+        i += 1
+    return indice
+
+
+def buscar_indice_juego(juegos: list, nombre: str, desarrolladora: str) -> int:
+    """Busca el índice de un juego a partir de su nombre y desarrolladora.
+
+    Args:
+        juegos (list): Lista de diccionarios de juegos.
+        nombre (str): Nombre del juego.
+        desarrolladora (str): Nombre de usuario de la desarrolladora.
+
+    Returns:
+        int: Índice del juego si existe, -1 en caso contrario.
+    """
+    indice = -1
+    i = 0
+    while i < len(juegos) and indice == -1:
+        if juegos[i]["nombre"] == nombre and juegos[i]["desarrolladora"] == desarrolladora:
+            indice = i
+        i += 1
+    return indice
+
+
+def buscar_juegos_por_empresa(juegos: list, empresa: str) -> list:
+    """Filtra los juegos publicados por una desarrolladora específica.
+
+    Args:
+        juegos (list): Lista de diccionarios de juegos.
+        empresa (str): Nombre de usuario de la desarrolladora.
+
+    Returns:
+        list: Lista de juegos cuya 'desarrolladora' coincide (sin distinguir mayúsculas).
+    """
+    resultado = []
+    i = 0
+    while i < len(juegos):
+        if juegos[i]["desarrolladora"].lower() == empresa.lower():
+            resultado.append(juegos[i])
+        i += 1
+    return resultado
+
+
+def calcular_ventas_totales(compras: list, desarrolladora: str) -> float:
+    """Calcula el monto total facturado por una desarrolladora en base a las compras.
+
+    Args:
+        compras (list): Lista de diccionarios de compras.
+        desarrolladora (str): Nombre de usuario de la desarrolladora.
+
+    Returns:
+        float: Suma de los precios de las compras asociadas a esa desarrolladora.
+    """
+    total = 0.0
+    i = 0
+    while i < len(compras):
+        if compras[i]["desarrolladora"].lower() == desarrolladora.lower():
+            total += compras[i]["precio"]
+        i += 1
+    return total
+
+
+def contar_ventas(compras: list, desarrolladora: str) -> int:
+    """Cuenta la cantidad de compras asociadas a una desarrolladora.
+
+    Args:
+        compras (list): Lista de diccionarios de compras.
+        desarrolladora (str): Nombre de usuario de la desarrolladora.
+
+    Returns:
+        int: Cantidad de compras encontradas.
+    """
+    cantidad = 0
+    i = 0
+    while i < len(compras):
+        if compras[i]["desarrolladora"].lower() == desarrolladora.lower():
+            cantidad += 1
+        i += 1
+    return cantidad
+
+
+def juego_mas_vendido(juegos: list) -> dict:
+    """Determina el juego con más copias vendidas dentro de una lista.
+
+    Args:
+        juegos (list): Lista de diccionarios de juegos.
+
+    Returns:
+        dict: Diccionario del juego más vendido, o {} si la lista está vacía.
+    """
+    if len(juegos) == 0:
+        return {}
+    mejor = juegos[0]
+    i = 1
+    while i < len(juegos):
+        if juegos[i]["copias_vendidas"] > mejor["copias_vendidas"]:
+            mejor = juegos[i]
+        i += 1
+    return mejor
+
+
+def construir_matriz_juegos(juegos: list) -> list:
+    """Construye una matriz (lista de listas) con los datos de cada juego.
+
+    Args:
+        juegos (list): Lista de diccionarios de juegos.
+
+    Returns:
+        list: Matriz con filas [nombre, desarrolladora, precio, copias_vendidas].
+    """
+    matriz = []
+    i = 0
+    while i < len(juegos):
+        j = juegos[i]
+        matriz.append([j["nombre"], j["desarrolladora"], j["precio"], j["copias_vendidas"]])
+        i += 1
+    return matriz
+
+
+def construir_matriz_usuarios(usuarios: list) -> list:
+    """Construye una matriz (lista de listas) con usuario y rol de cada usuario.
+
+    Args:
+        usuarios (list): Lista de diccionarios de usuarios.
+
+    Returns:
+        list: Matriz con filas [usuario, rol].
+    """
+    matriz = []
+    i = 0
+    while i < len(usuarios):
+        matriz.append([usuarios[i]["usuario"], usuarios[i]["rol"]])
+        i += 1
+    return matriz
+
+
+def construir_matriz_compras(compras: list) -> list:
+    """Construye una matriz (lista de listas) con los datos de cada compra.
+
+    Args:
+        compras (list): Lista de diccionarios de compras.
+
+    Returns:
+        list: Matriz con filas [jugador, juego, precio, metodo_pago, fecha].
+    """
+    matriz = []
+    i = 0
+    while i < len(compras):
+        c = compras[i]
+        matriz.append([c["jugador"], c["juego"], c["precio"], c["metodo_pago"], c["fecha"]])
+        i += 1
+    return matriz
+
+
+#  ENTRADA AUXILIAR VALIDADA ──────────────────────────────────
+
+def leer_entero_positivo(mensaje: str) -> int:
+    """Solicita un número entero positivo por consola, validando manualmente.
+
+    Args:
+        mensaje (str): Texto a mostrar en el input.
+
+    Returns:
+        int: Número entero positivo ingresado.
+    """
+    valor = -1
+    while valor == -1:
+        entrada = input(mensaje)
+        if entrada.isdigit() and int(entrada) > 0:
+            valor = int(entrada)
+        else:
+            print("Error: ingrese un número entero positivo.\n")
+    return valor
+
+
+#  JUGADOR ────────────────────────────────────────────────────
+
+def ver_perfil_jugador(usuarios: list, indice_usuario: int) -> None:
+    """Muestra los datos del jugador logueado.
+
+    Args:
+        usuarios (list): Lista de diccionarios de usuarios.
+        indice_usuario (int): Índice del usuario en la lista.
+    """
+    u = usuarios[indice_usuario]
     mostrar_perfil_jugador(
-        usuarios[indice_usuario],
-        nombres[indice_usuario],
-        apellidos[indice_usuario],
-        paises[indice_usuario],
-        generos_favoritos[indice_usuario],
-        horas_jugadas[indice_usuario],
-        juegos_comprados[indice_usuario],
-        logros[indice_usuario],
+        u["usuario"],
+        u["nombre"],
+        u["apellido"],
+        u["pais"],
+        u["genero_favorito"],
+        u["horas_jugadas"],
+        u["juegos_comprados"],
+        u["logros"],
     )
 
 
-
-def explorar_catalogo() -> None:
+def explorar_catalogo(usuarios: list, juegos: list, compras: list, indice_usuario: int) -> None:
     """Permite al jugador buscar juegos por empresa, elegir un título
-    y simular una compra con método de pago.
-    """
-    # ── Datos hardcodeados ──────────────────────────────────
-    empresas = ["ubisoft",    "ea",         "valve"]
-    titulos  = [
-        ["Assassin's Creed", "Far Cry 6",  "Rainbow Six"],
-        ["FIFA 25",          "The Sims 4", "Apex Legends"],
-        ["CS2",              "Dota 2",     "Half-Life: Alyx"],
-    ]
-    precios  = [
-        [59.99, 49.99, 39.99],
-        [69.99, 39.99,  0.00],
-        [49.99,  0.00, 59.99],
-    ]
-    metodos_pago = ["Tarjeta de Crédito", "PayPal"]
+    y simular una compra con método de pago. Persiste la compra en
+    compras.json y actualiza juegos.json y usuarios.json.
 
-    # ── 1. Buscar empresa ───────────────────────────────────
+    Args:
+        usuarios (list): Lista de diccionarios de usuarios (se modifica en memoria y se persiste).
+        juegos (list): Lista de diccionarios de juegos (se modifica en memoria y se persiste).
+        compras (list): Lista de diccionarios de compras (se modifica en memoria y se persiste).
+        indice_usuario (int): Índice del jugador logueado.
+    """
     empresa = ""
     while len(empresa) < 3:
-        empresa = input("Ingrese el nombre de la empresa desarrolladora: ").lower()
+        empresa = input("Ingrese el nombre de usuario de la empresa desarrolladora: ")
         if len(empresa) < 3:
             print("Error: debe tener al menos 3 caracteres.\n")
 
-    indice_empresa = -1
-    i = 0
-    while i < len(empresas) and indice_empresa == -1:
-        if empresas[i] == empresa:
-            indice_empresa = i
-        i += 1
+    juegos_empresa = buscar_juegos_por_empresa(juegos, empresa)
 
-    if indice_empresa == -1:
-        print(f"No se encontró la empresa '{empresa}'.\n")
+    if len(juegos_empresa) == 0:
+        print(f"No se encontraron juegos de la desarrolladora '{empresa}'.\n")
         return
 
-    # ── 2. Submenú de juegos ────────────────────────────────
-    mostrar_catalogo_juegos(empresa, titulos[indice_empresa], precios[indice_empresa])
+    mostrar_catalogo_juegos(empresa, juegos_empresa)
 
     juego_elegido = -1
     while juego_elegido == -1:
         opcion = input("Elija un juego (número): ")
         if opcion.isdigit():
             num = int(opcion)
-            if 1 <= num <= len(titulos[indice_empresa]):
+            if 1 <= num <= len(juegos_empresa):
                 juego_elegido = num - 1
             else:
                 print("Opción fuera de rango.\n")
         else:
             print("Ingrese un número válido.\n")
 
-    # ── 3. Submenú de métodos de pago ───────────────────────
+    metodos_pago = ["Tarjeta de Credito", "MercadoPago"]
     print("\n==== MÉTODO DE PAGO ====\n")
     i = 0
     while i < len(metodos_pago):
@@ -99,48 +281,62 @@ def explorar_catalogo() -> None:
         else:
             print("Ingrese un número válido.\n")
 
-    # ── 4. Confirmar compra ─────────────────────────────────
-    mostrar_confirmacion_compra(
-        titulos[indice_empresa][juego_elegido],
-        metodos_pago[metodo_elegido],
-        precios[indice_empresa][juego_elegido],
-    )
+    juego = juegos_empresa[juego_elegido]
 
-#  DESARROLLADORA
- 
-def ver_datos_desarrolladora(indice_usuario: int) -> None:
-    """Muestra los datos de la desarrolladora logueada (hardcodeados).
- 
-    Incluye al menos 3 datos de tipo str y 3 de tipo int.
- 
+    nueva_compra = {
+        "jugador": usuarios[indice_usuario]["usuario"],
+        "juego": juego["nombre"],
+        "desarrolladora": juego["desarrolladora"],
+        "precio": juego["precio"],
+        "metodo_pago": metodos_pago[metodo_elegido],
+        "fecha": date.today().isoformat(),
+    }
+    compras.append(nueva_compra)
+    guardar_compras(compras)
+
+    indice_juego = buscar_indice_juego(juegos, juego["nombre"], juego["desarrolladora"])
+    if indice_juego != -1:
+        juegos[indice_juego]["copias_vendidas"] += 1
+        guardar_juegos(juegos)
+
+    usuarios[indice_usuario]["juegos_comprados"] += 1
+    guardar_usuarios(usuarios)
+
+    mostrar_confirmacion_compra(juego["nombre"], metodos_pago[metodo_elegido], juego["precio"])
+
+
+#  DESARROLLADORA ─────────────────────────────────────────────
+
+def ver_datos_desarrolladora(usuarios: list, indice_usuario: int) -> None:
+    """Muestra los datos de la desarrolladora logueada.
+
     Args:
-        indice_usuario (int): Índice del usuario en las listas globales.
+        usuarios (list): Lista de diccionarios de usuarios.
+        indice_usuario (int): Índice del usuario en la lista.
     """
-    # Datos hardcodeados por índice de usuario desarrolladora
-    nombres_estudio  = ["Blyts", "HyperBeard",    "The Game Kitchen"]
-    paises_estudio   = ["Argentina",           "México",        "España"]
-    sitios_web       = ["https://en.blyts.com/",  "https://hyperbeard.com/", "https://thegamekitchen.com/"]
-    juegos_pub       = [8,                     3,               12]
-    ventas_tot       = [45000,                 12000,           98000]
-    año_fund       = [2015,                  2019,            2010]
-
+    u = usuarios[indice_usuario]
     mostrar_datos_desarrolladora(
-        nombres_estudio[indice_usuario],
-        paises_estudio[indice_usuario],
-        sitios_web[indice_usuario],
-        juegos_pub[indice_usuario],
-        ventas_tot[indice_usuario],
-        año_fund[indice_usuario],
+        u["nombre_estudio"],
+        u["pais"],
+        u["sitio_web"],
+        u["juegos_publicados"],
+        u["ventas_totales"],
+        u["año_fundacion"],
     )
- 
- 
- 
-def publicar_juego() -> None:
-    """Solicita los datos de un nuevo juego y simula su publicación.
- 
+
+
+def publicar_juego(usuarios: list, juegos: list, indice_usuario: int) -> None:
+    """Solicita los datos de un nuevo juego, lo agrega a juegos.json y
+    actualiza el contador de juegos publicados de la desarrolladora.
+
     Validaciones:
         - Nombre del videojuego: no vacío.
         - Precio: debe ser mayor a 0.
+
+    Args:
+        usuarios (list): Lista de diccionarios de usuarios (se modifica en memoria y se persiste).
+        juegos (list): Lista de diccionarios de juegos (se modifica en memoria y se persiste).
+        indice_usuario (int): Índice de la desarrolladora logueada.
     """
     nombre_juego = ""
     while nombre_juego == "":
@@ -173,32 +369,67 @@ def publicar_juego() -> None:
             else:
                 precio_valido = True
 
+    nuevo_juego = {
+        "nombre": nombre_juego,
+        "desarrolladora": usuarios[indice_usuario]["usuario"],
+        "precio": precio,
+        "copias_vendidas": 0,
+    }
+    juegos.append(nuevo_juego)
+    guardar_juegos(juegos)
+
+    usuarios[indice_usuario]["juegos_publicados"] += 1
+    guardar_usuarios(usuarios)
+
     mostrar_confirmacion_publicacion(nombre_juego, precio)
- 
- 
-def ver_ventas() -> None:
-    """Simula la visualización de ventas del mes con datos ficticios."""
-    mostrar_ventas()
- 
- 
-#  ADMINISTRADOR
- 
-def crear_usuario() -> None:
-    """Solicita y valida los datos para crear un nuevo usuario.
- 
+
+
+def ver_ventas(usuarios: list, juegos: list, compras: list, indice_usuario: int) -> None:
+    """Calcula y muestra las ventas reales de la desarrolladora logueada,
+    a partir de los datos persistidos en compras.json y juegos.json.
+
+    Args:
+        usuarios (list): Lista de diccionarios de usuarios.
+        juegos (list): Lista de diccionarios de juegos.
+        compras (list): Lista de diccionarios de compras.
+        indice_usuario (int): Índice de la desarrolladora logueada.
+    """
+    desarrolladora = usuarios[indice_usuario]["usuario"]
+    cantidad = contar_ventas(compras, desarrolladora)
+    total = calcular_ventas_totales(compras, desarrolladora)
+    juegos_propios = buscar_juegos_por_empresa(juegos, desarrolladora)
+    mejor = juego_mas_vendido(juegos_propios)
+    nombre_mejor = mejor["nombre"] if "nombre" in mejor else "N/A"
+    mostrar_ventas(cantidad, total, nombre_mejor)
+
+
+#  ADMINISTRADOR ──────────────────────────────────────────────
+
+def crear_usuario(usuarios: list) -> None:
+    """Solicita y valida los datos para crear un nuevo usuario, lo agrega
+    a la lista en memoria y persiste el cambio en usuarios.json.
+
     Validaciones:
-        - Nombre de usuario: mínimo 4 caracteres.
-        - Contraseña: mínimo 8 caracteres.
+        - Nombre de usuario: mínimo 4 caracteres y no debe existir ya.
+        - Contraseña: mínimo 8 caracteres (se guarda hasheada).
         - Rol: 'Jugador' o 'Desarrolladora'.
         - Datos adicionales según el rol elegido.
+
+    Args:
+        usuarios (list): Lista de diccionarios de usuarios (se modifica en memoria y se persiste).
     """
     print("\n==== CREAR USUARIO ====\n")
 
     nombre_usuario = ""
-    while len(nombre_usuario) < 4:
+    usuario_valido = False
+    while not usuario_valido:
         nombre_usuario = input("Ingrese el nombre de usuario (mín. 4 caracteres): ")
         if len(nombre_usuario) < 4:
             print("Error: el nombre de usuario debe tener al menos 4 caracteres.\n")
+        elif buscar_indice_usuario(usuarios, nombre_usuario) != -1:
+            print("Error: ese nombre de usuario ya existe.\n")
+        else:
+            usuario_valido = True
 
     contraseña = ""
     while len(contraseña) < 8:
@@ -226,31 +457,47 @@ def crear_usuario() -> None:
             print("Ingrese un número válido.\n")
 
     rol = roles_validos[rol_elegido]
-
     print(f"\nDatos adicionales para {rol}:\n")
 
-    nombre = input("Nombre: ")
-    apellido = input("Apellido: ")
-    pais = input("País: ")
+    nuevo_usuario = {
+        "usuario": nombre_usuario,
+        "contraseña": hashear_password(contraseña),
+        "rol": rol,
+    }
 
     if rol == "Jugador":
-        genero_favorito = input("Género de videojuego favorito: ")
-        print(f"\n  Género favorito registrado: {genero_favorito}")
+        nuevo_usuario["nombre"] = input("Nombre: ")
+        nuevo_usuario["apellido"] = input("Apellido: ")
+        nuevo_usuario["pais"] = input("País: ")
+        nuevo_usuario["genero_favorito"] = input("Género de videojuego favorito: ")
+        nuevo_usuario["horas_jugadas"] = 0
+        nuevo_usuario["juegos_comprados"] = 0
+        nuevo_usuario["logros"] = 0
     else:
-        sitio_web = input("Sitio web del estudio: ")
-        print(f"\n  Sitio web registrado: {sitio_web}")
+        nuevo_usuario["nombre_estudio"] = input("Nombre del estudio: ")
+        nuevo_usuario["pais"] = input("País: ")
+        nuevo_usuario["sitio_web"] = input("Sitio web del estudio: ")
+        nuevo_usuario["juegos_publicados"] = 0
+        nuevo_usuario["ventas_totales"] = 0
+        nuevo_usuario["año_fundacion"] = leer_entero_positivo("Año de fundación: ")
+
+    usuarios.append(nuevo_usuario)
+    guardar_usuarios(usuarios)
 
     mostrar_confirmacion_creacion(nombre_usuario, rol)
- 
- 
-def borrar_usuario() -> None:
-    """Solicita un nombre de usuario y simula su eliminación del sistema.
- 
+
+
+def borrar_usuario(usuarios: list, eliminados: list) -> None:
+    """Solicita un nombre de usuario, lo quita de usuarios.json y lo
+    registra en eliminados.json.
+
     Validaciones:
         - Nombre de usuario: mínimo 4 caracteres.
- 
-    Nota:
-        No elimina datos reales. Solo muestra un mensaje de confirmación.
+        - Debe existir en la lista de usuarios.
+
+    Args:
+        usuarios (list): Lista de diccionarios de usuarios (se modifica en memoria y se persiste).
+        eliminados (list): Lista de diccionarios de usuarios eliminados (se modifica en memoria y se persiste).
     """
     print("\n==== BORRAR USUARIO ====\n")
 
@@ -260,16 +507,20 @@ def borrar_usuario() -> None:
         if len(nombre_usuario) < 4:
             print("Error: el nombre de usuario debe tener al menos 4 caracteres.\n")
 
+    indice = buscar_indice_usuario(usuarios, nombre_usuario)
+    if indice == -1:
+        print(f"No se encontró el usuario '{nombre_usuario}'.\n")
+        return
+
+    usuario_eliminado = usuarios.pop(indice)
+    eliminados.append(usuario_eliminado)
+
+    guardar_usuarios(usuarios)
+    guardar_eliminados(eliminados)
+
     mostrar_confirmacion_borrado(nombre_usuario)
- 
- 
+
+
 def ver_info_sistema() -> None:
-    """Muestra información general del sistema GameHub.
- 
-    Incluye:
-        - Nombres de los integrantes del grupo.
-        - Descripción del sistema (propósito, problema que resuelve, tipos de usuario).
-        - Funcionalidades extra por rol (mínimo 3 para Jugador,
-          2 para Desarrolladora, 2 para Administrador).
-    """
+    """Muestra información general del sistema GameHub."""
     mostrar_info_sistema()

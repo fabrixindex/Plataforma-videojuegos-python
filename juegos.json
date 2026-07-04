@@ -1,0 +1,26 @@
+[
+  {
+    "nombre": "Assassin's Creed",
+    "desarrolladora": "ubisoftgames",
+    "precio": 59.99,
+    "copias_vendidas": 1200
+  },
+  {
+    "nombre": "Far Cry 6",
+    "desarrolladora": "ubisoftgames",
+    "precio": 49.99,
+    "copias_vendidas": 890
+  },
+  {
+    "nombre": "Rainbow Six Siege",
+    "desarrolladora": "ubisoftgames",
+    "precio": 39.99,
+    "copias_vendidas": 1110
+  },
+  {
+    "nombre": "Kleptocats",
+    "desarrolladora": "hyperbeard01",
+    "precio": 0.0,
+    "copias_vendidas": 5401
+  }
+]
