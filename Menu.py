@@ -85,7 +85,7 @@ def menu_desarrolladora(indice_usuario: int, usuarios: list, juegos: list, compr
                 ver_datos_desarrolladora(usuarios, indice_usuario)
                 esperar_menu()
             case "2":
-                publicar_juego(usuarios, juegos, indice_usuario)
+                gestionar_publicacion_juego(usuarios, juegos, indice_usuario)
                 esperar_menu()
             case "3":
                 ver_ventas(usuarios, juegos, compras, indice_usuario)

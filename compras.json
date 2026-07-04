@@ -30,5 +30,13 @@
     "precio": 0.0,
     "metodo_pago": "Tarjeta de Credito",
     "fecha": "2026-07-03"
+  },
+  {
+    "jugador": "elrubiusomg",
+    "juego": "Far Cry 6",
+    "desarrolladora": "ubisoftgames",
+    "precio": 49.99,
+    "metodo_pago": "Tarjeta de Credito",
+    "fecha": "2026-07-03"
   }
 ]

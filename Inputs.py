@@ -54,7 +54,6 @@ def iniciar_sesion(usuarios: list) -> int:
     while retorno == -1:
         usuario = input("Ingrese su usuario: ")
         password = input("Ingrese su contraseña: ")
-
         if len(usuario) < 4:
             print("Error: el usuario debe tener al menos 4 caracteres.\n")
         elif len(password) < 8:

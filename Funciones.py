@@ -6,8 +6,6 @@ from Persistencia import guardar_usuarios, guardar_juegos, guardar_compras, guar
 
 
 #  FUNCIONES PURAS (búsqueda, filtrado, cálculo) ─────────────────
-#  No reciben ni modifican variables globales: reciben datos y
-#  devuelven un resultado.
 
 def buscar_indice_usuario(usuarios: list, nombre_usuario: str) -> int:
     """Busca el índice de un usuario por nombre de usuario.
@@ -177,6 +175,164 @@ def construir_matriz_compras(compras: list) -> list:
         i += 1
     return matriz
 
+def buscar_usuario(usuarios: list, nombre: str) -> dict | None:
+    """Busca un usuario por nombre de usuario.
+ 
+    Args:
+        usuarios (list): Lista de diccionarios de usuarios.
+        nombre (str): Nombre de usuario a buscar.
+ 
+    Returns:
+        dict | None: Diccionario del usuario si existe, None en caso contrario.
+    """
+    resultado = None
+    i = 0
+    while i < len(usuarios) and resultado is None:
+        if usuarios[i]["usuario"] == nombre:
+            resultado = usuarios[i]
+        i += 1
+    return resultado
+ 
+ 
+def filtrar_por_rol(usuarios: list, rol: str) -> list:
+    """Filtra los usuarios que tienen un rol específico.
+ 
+    Args:
+        usuarios (list): Lista de diccionarios de usuarios.
+        rol (str): Rol a filtrar ("Jugador", "Desarrolladora" o "Administrador").
+ 
+    Returns:
+        list: Lista de usuarios cuyo rol coincide.
+    """
+    resultado = []
+    i = 0
+    while i < len(usuarios):
+        if usuarios[i]["rol"] == rol:
+            resultado.append(usuarios[i])
+        i += 1
+    return resultado
+ 
+ 
+def filtrar_por_desarrolladora(juegos: list, nombre: str) -> list:
+    """Filtra los juegos publicados por una desarrolladora específica.
+ 
+    Args:
+        juegos (list): Lista de diccionarios de juegos.
+        nombre (str): Nombre de usuario de la desarrolladora.
+ 
+    Returns:
+        list: Lista de juegos cuya 'desarrolladora' coincide (sin distinguir mayúsculas).
+    """
+    resultado = []
+    i = 0
+    while i < len(juegos):
+        if juegos[i]["desarrolladora"].lower() == nombre.lower():
+            resultado.append(juegos[i])
+        i += 1
+    return resultado
+ 
+ 
+def buscar_juego(juegos: list, nombre: str) -> dict | None:
+    """Busca un juego por nombre dentro de una lista de juegos.
+ 
+    Se usa junto con filtrar_por_desarrolladora() para chequear si una
+    desarrolladora ya tiene un juego publicado con ese nombre.
+ 
+    Args:
+        juegos (list): Lista de diccionarios de juegos.
+        nombre (str): Nombre del juego a buscar.
+ 
+    Returns:
+        dict | None: Diccionario del juego si existe, None en caso contrario.
+    """
+    resultado = None
+    i = 0
+    while i < len(juegos) and resultado is None:
+        if juegos[i]["nombre"] == nombre:
+            resultado = juegos[i]
+        i += 1
+    return resultado
+ 
+ 
+def calcular_ventas(compras: list, desarrolladora: str) -> tuple:
+    """Calcula la cantidad de copias vendidas y el ingreso total de una desarrolladora.
+ 
+    Args:
+        compras (list): Lista de diccionarios de compras.
+        desarrolladora (str): Nombre de usuario de la desarrolladora.
+ 
+    Returns:
+        tuple: (cantidad_copias (int), ingreso_total (float))
+    """
+    cantidad = 0
+    total = 0.0
+    i = 0
+    while i < len(compras):
+        if compras[i]["desarrolladora"].lower() == desarrolladora.lower():
+            cantidad += 1
+            total += compras[i]["precio"]
+        i += 1
+    return cantidad, total
+ 
+ 
+def obtener_biblioteca_jugador(compras: list, jugador: str) -> list:
+    """Obtiene la lista de compras (juegos) realizadas por un jugador.
+ 
+    Args:
+        compras (list): Lista de diccionarios de compras.
+        jugador (str): Nombre de usuario del jugador.
+ 
+    Returns:
+        list: Lista de diccionarios de compras de ese jugador.
+    """
+    resultado = []
+    i = 0
+    while i < len(compras):
+        if compras[i]["jugador"].lower() == jugador.lower():
+            resultado.append(compras[i])
+        i += 1
+    return resultado
+ 
+ 
+def publicar_juego(juegos: list, nuevo_juego: dict) -> list:
+    """Agrega un nuevo juego a una copia de la lista de juegos.
+ 
+    Función pura: no modifica la lista `juegos` original, devuelve una nueva.
+ 
+    Args:
+        juegos (list): Lista de diccionarios de juegos.
+        nuevo_juego (dict): Diccionario con los datos del juego a agregar.
+ 
+    Returns:
+        list: Nueva lista de juegos con el nuevo juego incluido.
+    """
+    resultado = juegos.copy()
+    resultado.append(nuevo_juego)
+    return resultado
+ 
+ 
+def obtener_ventas_a_matriz(juegos: list, desarrolladora: str) -> list:
+    """Construye la matriz de ventas de una desarrolladora.
+ 
+    Cada fila representa un juego con [precio, copias_vendidas, ingreso_total].
+ 
+    Args:
+        juegos (list): Lista de diccionarios de juegos.
+        desarrolladora (str): Nombre de usuario de la desarrolladora.
+ 
+    Returns:
+        list: Matriz (lista de listas) [precio, copias_vendidas, ingreso_total].
+    """
+    matriz = []
+    juegos_propios = filtrar_por_desarrolladora(juegos, desarrolladora)
+    i = 0
+    while i < len(juegos_propios):
+        j = juegos_propios[i]
+        ingreso_total = j["precio"] * j["copias_vendidas"]
+        matriz.append([j["precio"], j["copias_vendidas"], ingreso_total])
+        i += 1
+    return matriz
+ 
 
 #  ENTRADA AUXILIAR VALIDADA ──────────────────────────────────
 
@@ -325,7 +481,7 @@ def ver_datos_desarrolladora(usuarios: list, indice_usuario: int) -> None:
     )
 
 
-def publicar_juego(usuarios: list, juegos: list, indice_usuario: int) -> None:
+def gestionar_publicacion_juego(usuarios: list, juegos: list, indice_usuario: int) -> None:
     """Solicita los datos de un nuevo juego, lo agrega a juegos.json y
     actualiza el contador de juegos publicados de la desarrolladora.
 
@@ -375,7 +531,9 @@ def publicar_juego(usuarios: list, juegos: list, indice_usuario: int) -> None:
         "precio": precio,
         "copias_vendidas": 0,
     }
-    juegos.append(nuevo_juego)
+    juegos_actualizados = publicar_juego(juegos, nuevo_juego)
+    juegos.clear()
+    juegos.extend(juegos_actualizados)
     guardar_juegos(juegos)
 
     usuarios[indice_usuario]["juegos_publicados"] += 1

@@ -9,7 +9,7 @@
     "nombre": "Far Cry 6",
     "desarrolladora": "ubisoftgames",
     "precio": 49.99,
-    "copias_vendidas": 890
+    "copias_vendidas": 891
   },
   {
     "nombre": "Rainbow Six Siege",
@@ -22,5 +22,11 @@
     "desarrolladora": "hyperbeard01",
     "precio": 0.0,
     "copias_vendidas": 5401
+  },
+  {
+    "nombre": "Prince of Persia The sands of Time",
+    "desarrolladora": "ubisoftgames",
+    "precio": 59.99,
+    "copias_vendidas": 0
   }
 ]

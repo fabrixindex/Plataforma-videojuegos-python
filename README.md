@@ -16,11 +16,11 @@ Sistema de gestión de videojuegos desarrollado en Python. Respecto a la Entrega
 
 ## 🎯 Criterios de desarrollo
 
-- **Sin uso de objetos ni métodos** — algoritmia pura con funciones, listas y estructuras de control
+- **Sin uso de objetos ni métodos propios** — algoritmia pura con funciones, listas y estructuras de control
 - **Sin excepciones** (`try/except`) — la falta de un archivo se resuelve verificando su existencia
 - **Persistencia real**: toda alta, baja o modificación de datos se guarda en el JSON correspondiente antes de volver al menú
-- **Funciones puras** de búsqueda, filtrado y cálculo (`Funciones.py`): reciben listas por parámetro, no tocan variables globales y devuelven un resultado
-- **Vista tabular (matriz)** disponible en al menos una opción de menú de cada rol
+- **Funciones puras** de búsqueda, filtrado y cálculo (`Funciones.py`): reciben listas por parámetro, no tocan variables globales y devuelven un resultado sin efectos secundarios
+- **Vista tabular (matriz)** disponible en al menos una opción de menú de cada rol, incluida la matriz de ventas por desarrolladora
 - **Separación en módulos**: `Prints.py`, `Inputs.py`, `Menu.py`, `Funciones.py`, `Persistencia.py` y `Main.py`
 
 ---
@@ -62,6 +62,14 @@ Lista de diccionarios con la misma estructura que un elemento de `usuarios.json`
 
 ---
 
+## 🔐 Login
+
+El login (`Inputs.py`) valida formato antes de consultar los datos:
+- Usuario: mínimo 4 caracteres
+- Contraseña: mínimo 8 caracteres
+
+Si el formato es válido, `validar_login()` (función pura) compara el hash de la contraseña ingresada contra `usuarios.json` y devuelve el índice del usuario logueado, o `-1` si no coincide. `iniciar_sesion()` repite la solicitud hasta loguear correctamente.
+
 ## 👥 Usuarios de prueba
 
 | Rol | Usuario | Contraseña |
@@ -83,7 +91,7 @@ Lista de diccionarios con la misma estructura que un elemento de `usuarios.json`
 
 ### 🏢 Desarrolladora
 1. Ver datos del estudio
-2. Publicar juego (se agrega a `juegos.json` y suma `juegos_publicados`)
+2. Publicar juego — `gestionar_publicacion_juego()` valida los datos por consola y arma el diccionario; internamente usa la función pura `publicar_juego()` para incorporarlo a la lista, y luego persiste en `juegos.json` y suma `juegos_publicados`
 3. Ver ventas — calculadas en tiempo real a partir de `compras.json` y `juegos.json` (cantidad de ventas, ingresos totales, juego más vendido)
 4. **Ver mis juegos en vista tabla**
 
@@ -97,12 +105,25 @@ Lista de diccionarios con la misma estructura que un elemento de `usuarios.json`
 
 ## 🔧 Funciones puras (búsqueda, filtrado y cálculo)
 
-Ubicadas en `Funciones.py`, reciben listas como parámetro y no modifican variables globales:
+Ubicadas en `Funciones.py`, reciben listas como parámetro y no modifican variables globales ni la lista recibida.
 
+**De la Entrega 1:**
 - `buscar_indice_usuario`, `buscar_indice_juego`
 - `buscar_juegos_por_empresa`
 - `calcular_ventas_totales`, `contar_ventas`, `juego_mas_vendido`
 - `construir_matriz_juegos`, `construir_matriz_usuarios`, `construir_matriz_compras`
+
+**Agregadas en la Entrega 2 (obligatorias según la consigna):**
+- `buscar_usuario(usuarios, nombre)` — devuelve el diccionario del usuario o `None`
+- `filtrar_por_rol(usuarios, rol)` — devuelve la lista de usuarios con ese rol
+- `filtrar_por_desarrolladora(juegos, nombre)` — devuelve los juegos de esa desarrolladora
+- `buscar_juego(juegos, nombre)` — devuelve el diccionario del juego o `None`
+- `calcular_ventas(compras, desarrolladora)` — devuelve `(cantidad_copias, ingreso_total)`
+- `obtener_biblioteca_jugador(compras, jugador)` — devuelve las compras de ese jugador
+- `publicar_juego(juegos, nuevo_juego)` — devuelve una **nueva** lista con el juego agregado, sin modificar la original
+- `obtener_ventas_a_matriz(juegos, desarrolladora)` — construye la matriz `[precio, copias_vendidas, ingreso_total]` por juego
+
+> Nota: `publicar_juego()` es el nombre exigido por la consigna para la función pura de arriba. La función que antes manejaba la interacción por consola para publicar un juego se renombró a `gestionar_publicacion_juego()` para no pisar el nombre.
 
 ---
 
@@ -122,7 +143,7 @@ python Main.py
 - Hash de contraseñas con `hashlib.sha256`
 - Listas de diccionarios como estructura central de datos
 - Funciones puras separadas de las funciones con efectos secundarios (E/S, persistencia)
-- Vistas tabulares (matrices) construidas a partir de datos reales
+- Vistas tabulares (matrices) construidas a partir de datos reales, incluida la matriz de ventas por desarrolladora
 - Estructuras de control: `while`, `match/case`
 - Validación de entrada sin excepciones
 - Separación de responsabilidades en módulos
